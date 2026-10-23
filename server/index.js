@@ -2,6 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const jwt = require('jsonwebtoken');
+const path = require('path');
+const fs = require('fs');
+const multer = require('multer');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
 
@@ -11,10 +14,44 @@ const stripe = require('stripe')(stripeSecretKey);
 const app = express();
 const port = process.env.PORT || 5000;
 
+// Ensure uploads folder exists
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+// Multer Storage Configuration
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    const ext = path.extname(file.originalname).toLowerCase();
+    cb(null, 'img-' + uniqueSuffix + ext);
+  }
+});
+
+// File filter: accept all image MIME types (jpg, png, jpeg, webp, gif, svg, avif, etc.)
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image/')) {
+    cb(null, true);
+  } else {
+    cb(new Error('Only image files (jpg, jpeg, png, webp, gif, svg, etc.) are allowed!'), false);
+  }
+};
+
+const upload = multer({
+  storage: storage,
+  fileFilter: fileFilter,
+  limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
+});
+
 // Middleware
 app.use(cors({
   origin: [
     'http://localhost:5173',
+    'http://localhost:5174',
     'http://localhost:3000',
     process.env.CLIENT_URL || '*'
   ],
@@ -22,6 +59,9 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(morgan('dev'));
+
+// Serve uploads folder as static files
+app.use('/uploads', express.static(uploadDir));
 
 // MongoDB Client Initialization
 const uri = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017";
@@ -132,6 +172,26 @@ async function run() {
     paymentsCollection = db.collection("payments");
     notificationsCollection = db.collection("notifications");
     reportsCollection = db.collection("reports");
+
+    /* ==============================================================
+       0. IMAGE UPLOAD ENDPOINT (MULTER)
+       ============================================================== */
+
+    // Upload any image (jpg, jpeg, png, webp, gif, svg, avif) and convert to accessible URL
+    app.post('/upload', upload.single('image'), (req, res) => {
+      if (!req.file) {
+        return res.status(400).send({ error: true, message: 'No image file uploaded.' });
+      }
+
+      const fileUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+      res.send({
+        success: true,
+        url: fileUrl,
+        filename: req.file.filename,
+        mimetype: req.file.mimetype,
+        size: req.file.size
+      });
+    });
 
     /* ==============================================================
        1. AUTH & JWT ENDPOINTS
