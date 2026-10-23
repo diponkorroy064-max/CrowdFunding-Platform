@@ -53,3 +53,26 @@ h1, h2, h3, h4, h5, h6 {
   width: 24px !important;
   border-radius: 6px !important;
 }
+
+/* Universal Button and Clickable Cursor Pointer Rule */
+button,
+[role="button"],
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+input[type="checkbox"],
+input[type="radio"],
+select,
+summary {
+  cursor: pointer !important;
+}
+
+button:disabled,
+[role="button"][aria-disabled="true"],
+input[type="button"]:disabled,
+input[type="submit"]:disabled,
+input:disabled,
+select:disabled {
+  cursor: not-allowed !important;
+}
+
