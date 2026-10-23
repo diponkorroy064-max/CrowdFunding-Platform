@@ -84,6 +84,16 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
+                <Link href="/about" className="hover:text-emerald-400 transition-colors">
+                  About CrowdSpark
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="hover:text-emerald-400 transition-colors">
+                  Contact & Support
+                </Link>
+              </li>
+              <li>
                 <Link href="/campaigns?category=Technology" className="hover:text-emerald-400 transition-colors">
                   Technology & Innovation
                 </Link>
@@ -91,11 +101,6 @@ const Footer = () => {
               <li>
                 <Link href="/campaigns?category=Community" className="hover:text-emerald-400 transition-colors">
                   Community & Causes
-                </Link>
-              </li>
-              <li>
-                <Link href="/campaigns?category=Creative" className="hover:text-emerald-400 transition-colors">
-                  Art & Creative Work
                 </Link>
               </li>
             </ul>

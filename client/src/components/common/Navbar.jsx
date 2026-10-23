@@ -72,6 +72,24 @@ const Navbar = () => {
               Explore Campaigns
             </Link>
 
+            <Link
+              href="/about"
+              className={`text-sm font-semibold transition-colors ${
+                pathname === '/about' ? 'text-emerald-600 font-bold' : 'text-slate-600 hover:text-emerald-600'
+              }`}
+            >
+              About
+            </Link>
+
+            <Link
+              href="/contact"
+              className={`text-sm font-semibold transition-colors ${
+                pathname === '/contact' ? 'text-emerald-600 font-bold' : 'text-slate-600 hover:text-emerald-600'
+              }`}
+            >
+              Contact
+            </Link>
+
             {/* Join as Developer (Redirects to client GitHub repo) */}
             <a
               href={clientRepoUrl}
@@ -184,6 +202,22 @@ const Navbar = () => {
             className="flex items-center gap-2 py-2 text-sm font-semibold text-slate-700 hover:text-emerald-600"
           >
             <Compass className="w-4 h-4" /> Explore Campaigns
+          </Link>
+
+          <Link
+            href="/about"
+            onClick={() => setMobileMenuOpen(false)}
+            className="flex items-center gap-2 py-2 text-sm font-semibold text-slate-700 hover:text-emerald-600"
+          >
+            About CrowdSpark
+          </Link>
+
+          <Link
+            href="/contact"
+            onClick={() => setMobileMenuOpen(false)}
+            className="flex items-center gap-2 py-2 text-sm font-semibold text-slate-700 hover:text-emerald-600"
+          >
+            Contact Support
           </Link>
 
           <a
