@@ -28,7 +28,9 @@ You can sign in using the following pre-configured demo accounts:
 | Role | Email | Password | Default Welcome Balance | Primary Capabilities |
 | :--- | :--- | :--- | :--- | :--- |
 | **Admin** | `admin@crowdspark.com` | `Admin@12345` | 1,000 Credits | Approve campaigns, manage user roles, resolve fraud reports |
-| **Creator** | `creator@crowdspark.com` | `Creator@12345` | 20 Credits | Launch campaigns, review & approve pledges, request withdrawals |
+| **Creator (AgriTech)** | `tariq.agri@crowdspark.org` | `Creator@12345` | 20 Credits | Agriculture & Farming campaigns, manage pledges, withdraw funds |
+| **Creator (Technology)** | `evelyn.tech@crowdspark.org` | `Creator@12345` | 20 Credits | Next-Gen Tech & Robotics campaigns, manage pledges, withdraw funds |
+| **Creator (Demo)** | `creator@crowdspark.com` | `Creator@12345` | 20 Credits | Launch campaigns, review & approve pledges, request withdrawals |
 | **Supporter** | `supporter@crowdspark.com` | `Supporter@12345` | 50 Credits | Explore campaigns, pledge credits, purchase credits via Stripe |
 
 ---
