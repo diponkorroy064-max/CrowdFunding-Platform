@@ -1,8 +1,13 @@
-const { getDB } = require('../config/db');
+const { getDB, connectDB } = require('../config/db');
 
 const verifyAdmin = async (req, res, next) => {
   try {
-    const db = getDB();
+    let db;
+    try {
+      db = getDB();
+    } catch {
+      db = await connectDB();
+    }
     const email = req.decoded?.email;
     const user = await db.collection('users').findOne({ email: email?.toLowerCase() });
     if (user?.role !== 'admin') {
@@ -16,7 +21,12 @@ const verifyAdmin = async (req, res, next) => {
 
 const verifyCreator = async (req, res, next) => {
   try {
-    const db = getDB();
+    let db;
+    try {
+      db = getDB();
+    } catch {
+      db = await connectDB();
+    }
     const email = req.decoded?.email;
     const user = await db.collection('users').findOne({ email: email?.toLowerCase() });
     if (user?.role !== 'creator' && user?.role !== 'admin') {
@@ -30,7 +40,12 @@ const verifyCreator = async (req, res, next) => {
 
 const verifySupporter = async (req, res, next) => {
   try {
-    const db = getDB();
+    let db;
+    try {
+      db = getDB();
+    } catch {
+      db = await connectDB();
+    }
     const email = req.decoded?.email;
     const user = await db.collection('users').findOne({ email: email?.toLowerCase() });
     if (user?.role !== 'supporter' && user?.role !== 'admin') {

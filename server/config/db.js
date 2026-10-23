@@ -12,18 +12,23 @@ const client = new MongoClient(uri, {
 });
 
 let dbInstance = null;
+let clientPromise = null;
 
 async function connectDB() {
   if (dbInstance) return dbInstance;
-  try {
-    await client.connect();
-    console.log("Successfully connected to MongoDB Atlas Cluster!");
-    dbInstance = client.db(process.env.DB_NAME || "crowdspark_db");
-    return dbInstance;
-  } catch (error) {
-    console.error("MongoDB Atlas connection error:", error.message);
-    throw error;
+  if (!clientPromise) {
+    clientPromise = client.connect().then(() => {
+      console.log("Successfully connected to MongoDB Atlas Cluster!");
+      dbInstance = client.db(process.env.DB_NAME || "crowdspark_db");
+      return dbInstance;
+    }).catch(err => {
+      clientPromise = null;
+      console.error("MongoDB Atlas connection error:", error.message);
+      throw err;
+    });
   }
+  await clientPromise;
+  return dbInstance;
 }
 
 function getDB() {
@@ -33,4 +38,17 @@ function getDB() {
   return dbInstance;
 }
 
-module.exports = { connectDB, getDB, client };
+function getCollections() {
+  const db = getDB();
+  return {
+    usersCollection: db.collection("users"),
+    campaignsCollection: db.collection("campaigns"),
+    contributionsCollection: db.collection("contributions"),
+    withdrawalsCollection: db.collection("withdrawals"),
+    paymentsCollection: db.collection("payments"),
+    notificationsCollection: db.collection("notifications"),
+    reportsCollection: db.collection("reports"),
+  };
+}
+
+module.exports = { connectDB, getDB, getCollections, client };
