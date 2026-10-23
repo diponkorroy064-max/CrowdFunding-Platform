@@ -19,7 +19,12 @@ const db = clientInstance.db(process.env.DB_NAME || "crowdspark_db");
 export const auth = betterAuth({
   database: mongodbAdapter(db),
   secret: process.env.BETTER_AUTH_SECRET || "crowdspark_super_secret_better_auth_key_2026",
-  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
+  baseURL: process.env.BETTER_AUTH_URL || (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000")),
+  trustedOrigins: [
+    "http://localhost:3000",
+    "http://localhost:5005",
+    "https://*.vercel.app"
+  ],
   emailAndPassword: {
     enabled: true,
   },

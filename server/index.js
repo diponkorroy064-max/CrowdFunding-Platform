@@ -14,8 +14,8 @@ const stripe = require('stripe')(stripeSecretKey);
 const app = express();
 const port = process.env.PORT || 5000;
 
-// Ensure uploads folder exists
-const uploadDir = path.join(__dirname, 'uploads');
+// Ensure uploads folder exists (supporting Vercel ephemeral /tmp)
+const uploadDir = process.env.VERCEL ? path.join('/tmp', 'uploads') : path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
@@ -49,12 +49,7 @@ const upload = multer({
 
 // Middleware
 app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'http://localhost:5174',
-    'http://localhost:3000',
-    process.env.CLIENT_URL || '*'
-  ],
+  origin: true,
   credentials: true
 }));
 app.use(express.json());
@@ -159,19 +154,45 @@ async function createNotification({ message, toEmail, actionRoute }) {
   }
 }
 
-async function run() {
-  try {
-    await client.connect();
-    console.log("Connected successfully to MongoDB Atlas!");
+let clientPromise = null;
+const connectDB = async () => {
+  if (!db) {
+    if (!clientPromise) {
+      clientPromise = client.connect().then(() => {
+        console.log("Connected successfully to MongoDB Atlas!");
+        db = client.db(process.env.DB_NAME || "crowdspark_db");
+        usersCollection = db.collection("users");
+        campaignsCollection = db.collection("campaigns");
+        contributionsCollection = db.collection("contributions");
+        withdrawalsCollection = db.collection("withdrawals");
+        paymentsCollection = db.collection("payments");
+        notificationsCollection = db.collection("notifications");
+        reportsCollection = db.collection("reports");
+        return db;
+      }).catch(err => {
+        clientPromise = null;
+        console.error("MongoDB connection failed:", err.message);
+        throw err;
+      });
+    }
+    await clientPromise;
+  }
+  return db;
+};
 
-    db = client.db(process.env.DB_NAME || "crowdspark_db");
-    usersCollection = db.collection("users");
-    campaignsCollection = db.collection("campaigns");
-    contributionsCollection = db.collection("contributions");
-    withdrawalsCollection = db.collection("withdrawals");
-    paymentsCollection = db.collection("payments");
-    notificationsCollection = db.collection("notifications");
-    reportsCollection = db.collection("reports");
+// Initiate connection eagerly
+connectDB().catch(console.error);
+
+// Ensure DB is connected before any API requests proceed
+app.use(async (req, res, next) => {
+  if (req.path === '/' || req.path === '/favicon.ico') return next();
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    res.status(500).send({ error: true, message: 'Database connection failed: ' + err.message });
+  }
+});
 
     /* ==============================================================
        0. IMAGE UPLOAD ENDPOINT (MULTER)
@@ -936,12 +957,6 @@ async function run() {
     });
 
     console.log("All Crowdfunding Platform API routes registered successfully!");
-  } catch (error) {
-    console.error("MongoDB Connection / Setup Error:", error.message);
-  }
-}
-
-run().catch(console.dir);
 
 // Root route
 app.get('/', (req, res) => {
@@ -952,6 +967,10 @@ app.get('/', (req, res) => {
   });
 });
 
-app.listen(port, () => {
-  console.log(`CrowdSpark server is running smoothly on port ${port}`);
-});
+if (process.env.NODE_ENV !== 'test' && !process.env.VERCEL) {
+  app.listen(port, () => {
+    console.log(`CrowdSpark server is running smoothly on port ${port}`);
+  });
+}
+
+module.exports = app;
