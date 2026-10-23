@@ -11,10 +11,9 @@ dist/
 .env
 .env.*
 client/.env
-client/.env.*
 server/.env
-server/.env.*
 !*.example
+!**/.env.example
 
 # Logs & Debug
 logs
