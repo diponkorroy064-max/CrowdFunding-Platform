@@ -77,7 +77,7 @@ export default function DashboardLayout({ children }) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100/70 flex">
+    <div className="min-h-[calc(100vh-4rem)] sm:min-h-[calc(100vh-5rem)] bg-slate-100/70 flex">
       
       {/* Mobile Sidebar Overlay */}
       {sidebarOpen && (
@@ -87,10 +87,10 @@ export default function DashboardLayout({ children }) {
         />
       )}
 
-      {/* Sidebar Desktop & Mobile */}
+      {/* Sidebar Desktop & Mobile - Fixed Top to Bottom */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-slate-200/90 shadow-lg lg:shadow-none lg:static lg:translate-x-0 transform transition-transform duration-300 ease-in-out flex flex-col justify-between ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        className={`fixed top-0 lg:top-16 sm:lg:top-20 bottom-0 left-0 z-50 lg:z-30 w-72 bg-white border-r border-slate-200/90 shadow-xl lg:shadow-none transform transition-transform duration-300 ease-in-out flex flex-col justify-between overflow-y-auto ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`}
       >
         <div>
@@ -199,7 +199,7 @@ export default function DashboardLayout({ children }) {
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 lg:pl-72 flex flex-col min-w-0">
         
         {/* Mobile Header Toggle */}
         <div className="lg:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between">

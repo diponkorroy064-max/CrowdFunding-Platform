@@ -2,7 +2,7 @@ import "./globals.css";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import { AuthProvider } from "@/context/AuthContext";
 import Navbar from "@/components/common/Navbar";
-import Footer from "@/components/common/Footer";
+import FooterWrapper from "@/components/common/FooterWrapper";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -33,7 +33,7 @@ export default function RootLayout({ children }) {
           <main className="flex-grow">
             {children}
           </main>
-          <Footer />
+          <FooterWrapper />
         </AuthProvider>
       </body>
     </html>
