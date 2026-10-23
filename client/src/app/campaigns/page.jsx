@@ -1,79 +1,74 @@
-"use client";
-
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { 
-  Search, 
-  Filter, 
+  Sparkles, 
   Coins, 
   Calendar, 
   User, 
   ArrowRight, 
-  Sparkles,
-  SlidersHorizontal,
-  FolderHeart
+  FolderHeart 
 } from 'lucide-react';
-import apiClient from '@/lib/apiClient';
+import CampaignFiltersClient from '@/components/campaigns/CampaignFiltersClient';
 
-const CATEGORIES = [
-  'All',
-  'Clean Tech & Energy',
-  'Healthcare & Medical',
-  'Education & Learning',
-  'Humanitarian & Relief',
-  'Creative Arts',
-  'Community & Civic'
-];
+export const dynamic = 'force-dynamic';
 
-export default function ExploreCampaignsPage() {
-  const [campaigns, setCampaigns] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const [sortOption, setSortOption] = useState('raised-desc');
+export const metadata = {
+  title: 'Explore Campaigns | CrowdSpark',
+  description: 'Explore live, community-backed projects across clean energy, education, healthcare, and humanitarian initiatives. Server-side rendered with real-time updates.',
+};
 
-  const fetchCampaigns = async () => {
-    setLoading(true);
-    try {
-      const res = await apiClient.get('/campaigns/explore', {
-        params: {
-          category: selectedCategory,
-          search: search.trim() || undefined,
-          sort: sortOption,
-        },
-      });
-      setCampaigns(res.data || []);
-    } catch (err) {
-      console.error('Failed to load campaigns:', err);
-    } finally {
-      setLoading(false);
+async function getCampaigns(searchParams) {
+  try {
+    const sp = await searchParams;
+    const category = sp?.category || '';
+    const search = sp?.search || '';
+    const sort = sp?.sort || 'raised-desc';
+
+    const params = new URLSearchParams();
+    if (category && category !== 'All') params.append('category', category);
+    if (search) params.append('search', search);
+    if (sort) params.append('sort', sort);
+
+    const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5005';
+    const res = await fetch(`${apiBase}/campaigns/explore?${params.toString()}`, {
+      cache: 'no-store',
+    });
+
+    if (!res.ok) {
+      console.warn('Failed to fetch campaigns on server:', res.statusText);
+      return [];
     }
-  };
+    return await res.json();
+  } catch (err) {
+    console.warn('Server fetch error in getCampaigns:', err.message);
+    return [];
+  }
+}
 
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      fetchCampaigns();
-    }, 300);
+function calculateDaysLeft(deadline) {
+  if (!deadline) return 0;
+  const diff = new Date(deadline) - new Date();
+  const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+  return days > 0 ? days : 0;
+}
 
-    return () => clearTimeout(delayDebounceFn);
-  }, [search, selectedCategory, sortOption]);
+export default async function ExploreCampaignsPage({ searchParams }) {
+  const sp = await searchParams;
+  const category = sp?.category || 'All';
+  const search = sp?.search || '';
+  const sort = sp?.sort || 'raised-desc';
 
-  const calculateDaysLeft = (deadline) => {
-    if (!deadline) return 0;
-    const diff = new Date(deadline) - new Date();
-    const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
-    return days > 0 ? days : 0;
-  };
+  const campaigns = await getCampaigns(searchParams);
 
   return (
     <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         
-        {/* Page Header */}
+        {/* Page Header (Server-Side Rendered) */}
         <div className="text-center max-w-3xl mx-auto mb-10">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold uppercase tracking-wider mb-4">
             <Sparkles className="w-3.5 h-3.5" />
-            Discover Meaningful Causes
+            Discover Meaningful Causes (Server-Side Rendered)
           </div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight">
             Explore Active <span className="text-emerald-600">Campaigns</span>
@@ -83,100 +78,27 @@ export default function ExploreCampaignsPage() {
           </p>
         </div>
 
-        {/* Filter and Search Bar */}
-        <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-200/80 mb-8 space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-            
-            {/* Search Input */}
-            <div className="md:col-span-5 relative">
-              <Search className="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-              <input
-                type="text"
-                placeholder="Search campaigns by title..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm bg-slate-50/50"
-              />
-            </div>
+        {/* Filter and Search Bar (Client Island) */}
+        <CampaignFiltersClient
+          initialCategory={category}
+          initialSearch={search}
+          initialSort={sort}
+        />
 
-            {/* Category Select */}
-            <div className="md:col-span-4 relative">
-              <Filter className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full pl-10 pr-8 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm bg-slate-50/50 text-slate-700"
-              >
-                {CATEGORIES.map((cat) => (
-                  <option key={cat} value={cat}>
-                    Category: {cat}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Sort Options */}
-            <div className="md:col-span-3 relative">
-              <SlidersHorizontal className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-              <select
-                value={sortOption}
-                onChange={(e) => setSortOption(e.target.value)}
-                className="w-full pl-10 pr-8 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm bg-slate-50/50 text-slate-700"
-              >
-                <option value="raised-desc">Most Raised First</option>
-                <option value="raised-asc">Least Raised First</option>
-                <option value="deadline">Ending Soonest</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Category Quick Tags */}
-          <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
-            {CATEGORIES.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-all ${
-                  selectedCategory === cat
-                    ? 'bg-emerald-600 text-white shadow-sm'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Campaign List */}
-        {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="bg-white rounded-2xl p-4 border border-slate-200 animate-pulse space-y-4">
-                <div className="w-full h-48 bg-slate-200 rounded-xl"></div>
-                <div className="h-4 bg-slate-200 rounded w-1/3"></div>
-                <div className="h-6 bg-slate-200 rounded w-4/5"></div>
-                <div className="h-3 bg-slate-200 rounded w-full"></div>
-                <div className="h-10 bg-slate-200 rounded-xl"></div>
-              </div>
-            ))}
-          </div>
-        ) : campaigns.length === 0 ? (
+        {/* Campaign List Grid (Server-Side Rendered to HTML) */}
+        {campaigns.length === 0 ? (
           <div className="text-center py-20 bg-white rounded-2xl border border-slate-200">
             <FolderHeart className="w-14 h-14 text-slate-300 mx-auto mb-4" />
             <h3 className="text-lg font-bold text-slate-800">No campaigns found</h3>
             <p className="text-slate-500 text-sm mt-1">
               Try adjusting your search terms or category filter to discover ongoing projects.
             </p>
-            <button
-              onClick={() => {
-                setSearch('');
-                setSelectedCategory('All');
-              }}
-              className="mt-4 px-4 py-2 bg-emerald-600 text-white text-xs font-semibold rounded-xl hover:bg-emerald-700 transition-colors"
+            <Link
+              href="/campaigns"
+              className="mt-4 inline-block px-4 py-2 bg-emerald-600 text-white text-xs font-semibold rounded-xl hover:bg-emerald-700 transition-colors"
             >
               Reset Filters
-            </button>
+            </Link>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -213,7 +135,7 @@ export default function ExploreCampaignsPage() {
                   <div className="p-5 flex-1 flex flex-col justify-between">
                     <div>
                       <div className="flex items-center gap-1.5 text-xs text-slate-500 mb-2">
-                        <User className="w-3.5 h-3.5" />
+                        <User className="w-3.5 h-3.5 text-slate-400" />
                         <span className="truncate">{camp.creator_name || 'Verified Creator'}</span>
                       </div>
 
@@ -231,7 +153,7 @@ export default function ExploreCampaignsPage() {
                       <div>
                         <div className="flex justify-between items-center text-xs font-semibold mb-1.5">
                           <span className="text-emerald-700 flex items-center gap-1">
-                            <Coins className="w-3.5 h-3.5" />
+                            <Coins className="w-3.5 h-3.5 text-emerald-500" />
                             {camp.amount_raised || 0} Credits
                           </span>
                           <span className="text-slate-500">
