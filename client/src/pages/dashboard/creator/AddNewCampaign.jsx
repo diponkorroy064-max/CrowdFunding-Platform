@@ -37,32 +37,40 @@ const AddNewCampaign = () => {
 
   const categories = ['Technology', 'Community', 'Creative', 'Healthcare', 'Education'];
 
-  // imgBB Upload handler (Challenge mark requirement Page 7)
+  // Multer Image Upload Handler (Converts jpg, png, webp, etc. into server URL)
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
+    if (!file.type.startsWith('image/')) {
+      setErrorMessage('Please select a valid image file (JPG, PNG, WEBP, GIF, SVG, etc.).');
+      return;
+    }
+
     setUploadingImage(true);
     setErrorMessage('');
     try {
-      const imgbbApiKey = import.meta.env.VITE_IMGBB_API_KEY;
-      if (imgbbApiKey && imgbbApiKey !== 'placeholder_imgbb_key') {
-        const formData = new FormData();
-        formData.append('image', file);
-        const res = await axios.post(`https://api.imgbb.com/1/upload?key=${imgbbApiKey}`, formData);
-        if (res.data?.data?.url) {
-          setCampaignImageUrl(res.data.data.url);
-        }
-      } else {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setCampaignImageUrl(reader.result);
-        };
-        reader.readAsDataURL(file);
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const res = await apiClient.post('/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (res.data?.url) {
+        setCampaignImageUrl(res.data.url);
       }
     } catch (err) {
       console.error(err);
-      setErrorMessage('Image upload failed. You can also paste an image URL directly.');
+      // Fallback preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCampaignImageUrl(reader.result);
+      };
+      reader.readAsDataURL(file);
+      setErrorMessage('Image loaded locally (fallback preview).');
     } finally {
       setUploadingImage(false);
     }
