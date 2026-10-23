@@ -42,16 +42,20 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16 sm:h-20">
           
           {/* Logo / Brand */}
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
-              <Sparkles className="w-5 h-5 text-white" />
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white p-1 border border-slate-200/80 shadow-md shadow-emerald-500/10 flex items-center justify-center group-hover:scale-105 group-hover:border-emerald-500/50 transition-all">
+              <img
+                src="/logo.png"
+                alt="CrowdSpark Logo"
+                className="w-full h-full object-contain rounded-xl"
+              />
             </div>
             <div>
-              <span className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 group-hover:text-emerald-600 transition-colors">
-                Crowd<span className="text-emerald-500">Spark</span>
+              <span className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 group-hover:text-emerald-600 transition-colors block leading-tight">
+                Crowd<span className="text-emerald-600">Spark</span>
               </span>
-              <span className="hidden sm:block text-[10px] uppercase font-bold tracking-widest text-slate-400 -mt-1">
-                Next.js & Better Auth
+              <span className="hidden sm:block text-[9.5px] uppercase font-extrabold tracking-widest text-emerald-700/80">
+                Community Crowdfunding
               </span>
             </div>
           </Link>

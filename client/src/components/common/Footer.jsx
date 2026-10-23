@@ -11,13 +11,22 @@ const Footer = () => {
           
           {/* Brand & Description */}
           <div className="md:col-span-1 space-y-4">
-            <Link href="/" className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-md shadow-emerald-500/20">
-                <Sparkles className="w-5 h-5" />
+            <Link href="/" className="flex items-center gap-3 group">
+              <div className="w-10 h-10 rounded-xl bg-white p-1 border border-slate-700 shadow-md flex items-center justify-center group-hover:scale-105 transition-all">
+                <img
+                  src="/logo.png"
+                  alt="CrowdSpark Logo"
+                  className="w-full h-full object-contain rounded-lg"
+                />
               </div>
-              <span className="text-xl font-black tracking-tight text-white">
-                Crowd<span className="text-emerald-400">Spark</span>
-              </span>
+              <div>
+                <span className="text-xl font-black tracking-tight text-white block leading-tight">
+                  Crowd<span className="text-emerald-400">Spark</span>
+                </span>
+                <span className="text-[9px] uppercase font-bold tracking-widest text-emerald-400/80">
+                  Community Crowdfunding
+                </span>
+              </div>
             </Link>
             <p className="text-xs text-slate-400 leading-relaxed">
               Empowering visionary creators and passionate supporters through community micro-pledges, Next.js architecture, and Better Auth authentication.
