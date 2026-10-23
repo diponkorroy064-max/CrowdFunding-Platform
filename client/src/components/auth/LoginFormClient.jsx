@@ -6,11 +6,7 @@ import { useRouter } from 'next/navigation';
 import { 
   Lock, 
   Mail, 
-  ArrowRight, 
-  ShieldCheck, 
-  UserCheck, 
-  HeartHandshake,
-  CheckCircle2
+  ArrowRight
 } from 'lucide-react';
 import Swal from 'sweetalert2';
 import { useAuth } from '@/context/AuthContext';
@@ -56,47 +52,8 @@ export default function LoginFormClient() {
     }
   };
 
-  const handleQuickFill = (demoEmail, demoPassword) => {
-    setEmail(demoEmail);
-    setPassword(demoPassword);
-  };
-
   return (
     <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4 sm:px-0">
-      
-      {/* Evaluator 1-Click Fill Demo Credentials */}
-      <div className="mb-6 p-4 rounded-2xl bg-white border border-emerald-200/80 shadow-sm space-y-3">
-        <div className="flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-emerald-800">
-          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-          Evaluator 1-Click Demo Login
-        </div>
-        <div className="grid grid-cols-3 gap-2">
-          <button
-            type="button"
-            onClick={() => handleQuickFill('admin@crowdspark.org', 'AdminPass123!')}
-            className="px-2.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-bold transition-all flex flex-col items-center gap-1 shadow-sm"
-          >
-            <ShieldCheck className="w-4 h-4 text-emerald-400" />
-            <span>Admin</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => handleQuickFill('creator@solaraid.org', 'CreatorPass123!')}
-            className="px-2.5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-[11px] font-bold transition-all flex flex-col items-center gap-1 shadow-sm"
-          >
-            <UserCheck className="w-4 h-4 text-teal-200" />
-            <span>Creator</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => handleQuickFill('supporter@innovate.org', 'SupporterPass123!')}
-            className="px-2.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold transition-all flex flex-col items-center gap-1 shadow-sm"
-          >
-            <HeartHandshake className="w-4 h-4 text-emerald-200" />
-            <span>Supporter</span>
-          </button>
-        </div>
-      </div>
 
       {/* Form Card */}
       <div className="bg-white py-8 px-6 sm:px-10 shadow-xl shadow-slate-200/50 rounded-3xl border border-slate-200/80">

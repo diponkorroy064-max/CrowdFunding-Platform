@@ -21,9 +21,9 @@
 
 ---
 
-## 🔑 Demo Credentials (Examiner Quick-Fill)
+## 🔑 Demo & Test Credentials
 
-The login portal includes a one-click **Examiner Demo Quick-Fill** toolbar. Alternatively, sign in using the following accounts:
+You can sign in using the following pre-configured demo accounts:
 
 | Role | Email | Password | Default Welcome Balance | Primary Capabilities |
 | :--- | :--- | :--- | :--- | :--- |
