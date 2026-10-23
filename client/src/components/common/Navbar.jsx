@@ -1,31 +1,32 @@
+"use client";
+
 import React, { useState } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import { 
   Sparkles, 
   Coins, 
-  User, 
   LogOut, 
   LayoutDashboard, 
   Menu, 
   X, 
-  Compass,
-  PlusCircle,
-  ShieldAlert
+  Compass
 } from 'lucide-react';
 import { GithubIcon } from './SocialIcons';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '@/context/AuthContext';
 import NotificationDropdown from './NotificationDropdown';
 
 const Navbar = () => {
   const { user, logOut } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const navigate = useNavigate();
+  const pathname = usePathname();
+  const router = useRouter();
 
-  const clientRepoUrl = import.meta.env.VITE_CLIENT_REPO_URL || 'https://github.com/Programming-Hero-Web-Course4/b10-a11-client-side-username';
+  const clientRepoUrl = process.env.NEXT_PUBLIC_CLIENT_REPO_URL || 'https://github.com/diponkorroy064-max/CrowdFunding-Platform';
 
   const handleLogout = async () => {
     await logOut();
-    navigate('/');
+    router.push('/');
   };
 
   const getDashboardPath = () => {
@@ -41,7 +42,7 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16 sm:h-20">
           
           {/* Logo / Brand */}
-          <Link to="/" className="flex items-center gap-2.5 group">
+          <Link href="/" className="flex items-center gap-2.5 group">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
               <Sparkles className="w-5 h-5 text-white" />
             </div>
@@ -50,24 +51,22 @@ const Navbar = () => {
                 Crowd<span className="text-emerald-500">Spark</span>
               </span>
               <span className="hidden sm:block text-[10px] uppercase font-bold tracking-widest text-slate-400 -mt-1">
-                Fund Tomorrow
+                Next.js & Better Auth
               </span>
             </div>
           </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6">
-            <NavLink
-              to="/campaigns"
-              className={({ isActive }) =>
-                `text-sm font-semibold transition-colors flex items-center gap-1.5 ${
-                  isActive ? 'text-emerald-600' : 'text-slate-600 hover:text-emerald-600'
-                }`
-              }
+            <Link
+              href="/campaigns"
+              className={`text-sm font-semibold transition-colors flex items-center gap-1.5 ${
+                pathname === '/campaigns' ? 'text-emerald-600' : 'text-slate-600 hover:text-emerald-600'
+              }`}
             >
               <Compass className="w-4 h-4" />
               Explore Campaigns
-            </NavLink>
+            </Link>
 
             {/* Join as Developer (Redirects to client GitHub repo) */}
             <a
@@ -100,7 +99,7 @@ const Navbar = () => {
 
                 {/* Dashboard Button */}
                 <Link
-                  to={getDashboardPath()}
+                  href={getDashboardPath()}
                   className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-sm transition-all"
                 >
                   <LayoutDashboard className="w-3.5 h-3.5 text-emerald-400" />
@@ -137,13 +136,13 @@ const Navbar = () => {
             ) : (
               <div className="flex items-center gap-3">
                 <Link
-                  to="/login"
+                  href="/login"
                   className="text-xs font-semibold px-4 py-2 rounded-xl text-slate-700 hover:text-emerald-600 transition-colors"
                 >
                   Login
                 </Link>
                 <Link
-                  to="/register"
+                  href="/register"
                   className="text-xs font-semibold px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white shadow-md shadow-emerald-600/20 transition-all hover:shadow-lg"
                 >
                   Register
@@ -175,13 +174,13 @@ const Navbar = () => {
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-6 space-y-3">
-          <NavLink
-            to="/campaigns"
+          <Link
+            href="/campaigns"
             onClick={() => setMobileMenuOpen(false)}
             className="flex items-center gap-2 py-2 text-sm font-semibold text-slate-700 hover:text-emerald-600"
           >
             <Compass className="w-4 h-4" /> Explore Campaigns
-          </NavLink>
+          </Link>
 
           <a
             href={clientRepoUrl}
@@ -212,7 +211,7 @@ const Navbar = () => {
               </div>
 
               <Link
-                to={getDashboardPath()}
+                href={getDashboardPath()}
                 onClick={() => setMobileMenuOpen(false)}
                 className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-semibold"
               >
@@ -232,14 +231,14 @@ const Navbar = () => {
           ) : (
             <div className="pt-3 border-t border-slate-100 grid grid-cols-2 gap-2">
               <Link
-                to="/login"
+                href="/login"
                 onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center justify-center py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700"
               >
                 Login
               </Link>
               <Link
-                to="/register"
+                href="/register"
                 onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center justify-center py-2.5 rounded-xl bg-emerald-600 text-white text-xs font-semibold"
               >

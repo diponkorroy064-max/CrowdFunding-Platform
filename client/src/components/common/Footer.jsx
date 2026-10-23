@@ -1,6 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Sparkles, Heart, ShieldCheck, Mail, Globe } from 'lucide-react';
+import Link from 'next/link';
+import { Sparkles, Heart, ShieldCheck } from 'lucide-react';
 import { GithubIcon, LinkedinIcon, FacebookIcon, TwitterIcon } from './SocialIcons';
 
 const Footer = () => {
@@ -11,7 +11,7 @@ const Footer = () => {
           
           {/* Brand & Description */}
           <div className="md:col-span-1 space-y-4">
-            <Link to="/" className="flex items-center gap-2.5">
+            <Link href="/" className="flex items-center gap-2.5">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-md shadow-emerald-500/20">
                 <Sparkles className="w-5 h-5" />
               </div>
@@ -20,7 +20,7 @@ const Footer = () => {
               </span>
             </Link>
             <p className="text-xs text-slate-400 leading-relaxed">
-              Empowering visionary creators and passionate supporters to ignite world-changing ideas through community-driven micro-pledges and transparent platform credits.
+              Empowering visionary creators and passionate supporters through community micro-pledges, Next.js architecture, and Better Auth authentication.
             </p>
             {/* Social Links */}
             <div className="flex items-center gap-3 pt-2">
@@ -70,22 +70,22 @@ const Footer = () => {
             </h4>
             <ul className="space-y-2.5 text-xs text-slate-400">
               <li>
-                <Link to="/campaigns" className="hover:text-emerald-400 transition-colors">
+                <Link href="/campaigns" className="hover:text-emerald-400 transition-colors">
                   All Campaigns
                 </Link>
               </li>
               <li>
-                <Link to="/campaigns?category=Technology" className="hover:text-emerald-400 transition-colors">
+                <Link href="/campaigns?category=Technology" className="hover:text-emerald-400 transition-colors">
                   Technology & Innovation
                 </Link>
               </li>
               <li>
-                <Link to="/campaigns?category=Community" className="hover:text-emerald-400 transition-colors">
+                <Link href="/campaigns?category=Community" className="hover:text-emerald-400 transition-colors">
                   Community & Causes
                 </Link>
               </li>
               <li>
-                <Link to="/campaigns?category=Creative" className="hover:text-emerald-400 transition-colors">
+                <Link href="/campaigns?category=Creative" className="hover:text-emerald-400 transition-colors">
                   Art & Creative Work
                 </Link>
               </li>
@@ -123,7 +123,7 @@ const Footer = () => {
               Security & Trust
             </h4>
             <p className="text-xs text-slate-400 leading-relaxed mb-3">
-              Protected by SSL encryption and Stripe secure payment processing. Every campaign is vetted by our review committee.
+              Protected by Better Auth session encryption and Stripe secure payment processing.
             </p>
             <div className="flex items-center gap-2 text-xs text-emerald-400 font-semibold bg-emerald-950/60 p-2.5 rounded-xl border border-emerald-800/50">
               <ShieldCheck className="w-4 h-4" />
@@ -137,9 +137,9 @@ const Footer = () => {
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
           <p>© {new Date().getFullYear()} CrowdSpark Platform. All rights reserved.</p>
           <div className="flex items-center gap-1 text-slate-400">
-            <span>Crafted with</span>
+            <span>Powered by Next.js & Better Auth</span>
             <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500" />
-            <span>for MERN Stack Evaluation</span>
+            <span>for MERN Evaluation</span>
           </div>
         </div>
       </div>

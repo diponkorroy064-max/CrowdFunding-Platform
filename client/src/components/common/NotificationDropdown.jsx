@@ -1,17 +1,18 @@
+"use client";
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Bell, CheckCircle, ExternalLink, Sparkles } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
-import apiClient from '../../api/apiClient';
-import { useAuth } from '../../context/AuthContext';
+import { useRouter } from 'next/navigation';
+import apiClient from '@/lib/apiClient';
+import { useAuth } from '@/context/AuthContext';
 
 const NotificationDropdown = () => {
   const { user } = useAuth();
   const [notifications, setNotifications] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
-  const navigate = useNavigate();
+  const router = useRouter();
 
-  // Fetch notifications for the logged-in user
   const fetchNotifications = async () => {
     if (!user?.email) return;
     try {
@@ -24,11 +25,10 @@ const NotificationDropdown = () => {
 
   useEffect(() => {
     fetchNotifications();
-    const interval = setInterval(fetchNotifications, 15000); // Poll every 15s
+    const interval = setInterval(fetchNotifications, 15000);
     return () => clearInterval(interval);
   }, [user?.email]);
 
-  // Handle clicking outside to dismiss the floating pop-up
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -57,7 +57,7 @@ const NotificationDropdown = () => {
     }
     setIsOpen(false);
     if (notif.actionRoute) {
-      navigate(notif.actionRoute);
+      router.push(notif.actionRoute);
     }
   };
 
@@ -67,7 +67,7 @@ const NotificationDropdown = () => {
     <div className="relative inline-block text-left" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 rounded-xl text-slate-600 hover:text-emerald-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all focus:outline-none"
+        className="relative p-2 rounded-xl text-slate-600 hover:text-emerald-600 hover:bg-slate-100 transition-all focus:outline-none"
         title="Notifications"
         aria-label="View notifications"
       >
@@ -79,7 +79,6 @@ const NotificationDropdown = () => {
         )}
       </button>
 
-      {/* Floating Pop-up */}
       {isOpen && (
         <div className="absolute right-0 mt-2 w-80 sm:w-96 rounded-2xl bg-white shadow-2xl ring-1 ring-black/5 z-50 overflow-hidden border border-slate-100 animate-in fade-in slide-in-from-top-2 duration-200">
           <div className="p-4 bg-gradient-to-r from-emerald-600 to-teal-700 text-white flex items-center justify-between">
