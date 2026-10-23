@@ -76,7 +76,7 @@ const Navbar = () => {
               className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all border border-slate-200 shadow-sm"
               title="Visit Client GitHub Repository"
             >
-              <GithubIcon className="w-3.5 h-3.5" />
+              <GithubIcon className="w-3.5 h-3.5 shrink-0" width={14} height={14} />
               Join as Developer
             </a>
           </nav>
@@ -188,7 +188,7 @@ const Navbar = () => {
             rel="noopener noreferrer"
             className="flex items-center gap-2 py-2 text-sm font-semibold text-slate-700 hover:text-emerald-600"
           >
-            <GithubIcon className="w-4 h-4" /> Join as Developer (GitHub)
+            <GithubIcon className="w-4 h-4 shrink-0" width={16} height={16} /> Join as Developer (GitHub)
           </a>
 
           {user ? (

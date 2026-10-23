@@ -10,11 +10,13 @@
   },
   "dependencies": {
     "@stripe/stripe-js": "^10.1.0",
+    "@tailwindcss/postcss": "^4.3.3",
     "axios": "^1.20.0",
     "better-auth": "^1.7.12",
     "lucide-react": "^1.61.0",
     "mongodb": "^7.7.0",
     "next": "16.4.2",
+    "postcss": "^8.5.31",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "sweetalert2": "^11.26.25",
