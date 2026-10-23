@@ -101,6 +101,8 @@ CrowdFunding-Platform/
 │   │   ├── app/                 # App Router Pages (page.jsx & layout.jsx)
 │   │   │   ├── layout.jsx       # Root layout (Navbar, Footer, AuthProvider)
 │   │   │   ├── page.jsx         # Homepage (Hero Slider, Top Funded, Categories)
+│   │   │   ├── about/           # About Us story, values, team & stats
+│   │   │   ├── contact/         # Contact support & interactive inquiry form
 │   │   │   ├── campaigns/       # Explore campaigns & dynamic details [id]
 │   │   │   ├── dashboard/       # Role-based dashboards (Admin, Creator, Supporter)
 │   │   │   ├── login/           # Authentication portal
