@@ -9,6 +9,7 @@ import {
   FolderHeart 
 } from 'lucide-react';
 import CampaignFiltersClient from '@/components/campaigns/CampaignFiltersClient';
+import CampaignPagination from '@/components/campaigns/CampaignPagination';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,11 +24,15 @@ async function getCampaigns(searchParams) {
     const category = sp?.category || '';
     const search = sp?.search || '';
     const sort = sp?.sort || 'raised-desc';
+    const page = Math.max(1, parseInt(sp?.page) || 1);
+    const limit = Math.max(1, parseInt(sp?.limit) || 6);
 
     const params = new URLSearchParams();
     if (category && category !== 'All') params.append('category', category);
     if (search) params.append('search', search);
     if (sort) params.append('sort', sort);
+    params.append('page', page.toString());
+    params.append('limit', limit.toString());
 
     const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5005';
     const res = await fetch(`${apiBase}/campaigns/explore?${params.toString()}`, {
@@ -36,12 +41,28 @@ async function getCampaigns(searchParams) {
 
     if (!res.ok) {
       console.warn('Failed to fetch campaigns on server:', res.statusText);
-      return [];
+      return { campaigns: [], total: 0, totalPages: 1, page: 1, limit };
     }
-    return await res.json();
+    const data = await res.json();
+    if (Array.isArray(data)) {
+      return {
+        campaigns: data,
+        total: data.length,
+        totalPages: Math.ceil(data.length / limit) || 1,
+        page: 1,
+        limit
+      };
+    }
+    return {
+      campaigns: data.campaigns || [],
+      total: data.total || 0,
+      totalPages: data.totalPages || 1,
+      page: data.page || page,
+      limit: data.limit || limit
+    };
   } catch (err) {
     console.warn('Server fetch error in getCampaigns:', err.message);
-    return [];
+    return { campaigns: [], total: 0, totalPages: 1, page: 1, limit: 6 };
   }
 }
 
@@ -58,7 +79,13 @@ export default async function ExploreCampaignsPage({ searchParams }) {
   const search = sp?.search || '';
   const sort = sp?.sort || 'raised-desc';
 
-  const campaigns = await getCampaigns(searchParams);
+  const {
+    campaigns,
+    total,
+    totalPages,
+    page: currentPage,
+    limit: pageSize
+  } = await getCampaigns(searchParams);
 
   return (
     <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -186,6 +213,19 @@ export default async function ExploreCampaignsPage({ searchParams }) {
               );
             })}
           </div>
+        )}
+
+        {/* Server-Side Pagination Controls */}
+        {campaigns.length > 0 && (
+          <CampaignPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={total}
+            pageSize={pageSize || 6}
+            category={category}
+            search={search}
+            sort={sort}
+          />
         )}
 
       </div>

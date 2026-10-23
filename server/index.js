@@ -320,7 +320,7 @@ app.use(async (req, res, next) => {
 
     // Supporter / Public: Explore campaigns (status === 'approved' and deadline not passed)
     app.get('/campaigns/explore', async (req, res) => {
-      const { category, search, sort } = req.query;
+      const { category, search, sort, page, limit } = req.query;
       const today = new Date().toISOString().split('T')[0];
 
       let query = {
@@ -341,8 +341,27 @@ app.use(async (req, res, next) => {
       if (sort === 'raised-asc') sortOptions = { amount_raised: 1 };
       if (sort === 'deadline') sortOptions = { deadline: 1 };
 
-      const campaigns = await campaignsCollection.find(query).sort(sortOptions).toArray();
-      res.send(campaigns);
+      const total = await campaignsCollection.countDocuments(query);
+
+      const pageNum = Math.max(1, parseInt(page) || 1);
+      const limitNum = Math.max(1, parseInt(limit) || 6);
+      const skip = (pageNum - 1) * limitNum;
+      const totalPages = Math.ceil(total / limitNum) || 1;
+
+      const campaigns = await campaignsCollection
+        .find(query)
+        .sort(sortOptions)
+        .skip(skip)
+        .limit(limitNum)
+        .toArray();
+
+      res.send({
+        campaigns,
+        total,
+        page: pageNum,
+        totalPages,
+        limit: limitNum
+      });
     });
 
     // Get single campaign details
