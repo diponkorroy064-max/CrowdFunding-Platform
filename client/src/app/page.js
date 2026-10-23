@@ -1,5 +1,7 @@
+"use client";
+
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination, Navigation, EffectFade } from 'swiper/modules';
 import 'swiper/css';
@@ -14,21 +16,17 @@ import {
   Coins,
   ShieldCheck,
   Users,
-  Compass,
-  Award,
   Zap,
   Globe2,
-  CheckCircle2,
   Quote,
   Star
 } from 'lucide-react';
-import apiClient from '../../api/apiClient';
+import apiClient from '@/lib/apiClient';
 
-const Home = () => {
+export default function Home() {
   const [topCampaigns, setTopCampaigns] = useState([]);
   const [loadingCampaigns, setLoadingCampaigns] = useState(true);
 
-  // Fetch Top 6 Funded Campaigns
   useEffect(() => {
     const fetchTopCampaigns = async () => {
       try {
@@ -36,7 +34,6 @@ const Home = () => {
         if (res.data && res.data.length > 0) {
           setTopCampaigns(res.data);
         } else {
-          // Curated initial top campaigns if DB empty
           setTopCampaigns([
             {
               _id: 'mock1',
@@ -95,7 +92,7 @@ const Home = () => {
           ]);
         }
       } catch (err) {
-        console.warn('Using curated mock campaigns for showcase:', err);
+        console.warn('Error fetching top campaigns:', err.message);
       } finally {
         setLoadingCampaigns(false);
       }
@@ -104,12 +101,11 @@ const Home = () => {
     fetchTopCampaigns();
   }, []);
 
-  // 1. Hero Slider Data (3 Banners)
   const heroSlides = [
     {
       heading: 'Ignite Groundbreaking Ideas',
       subtitle: 'Where Visionary Creators Meet Dedicated Community Supporters',
-      description: 'Back sustainable technologies, creative storytelling, and social impact projects with platform credits and real-time transparency.',
+      description: 'Back sustainable technologies, creative storytelling, and social impact projects with platform credits and real-time transparency powered by Next.js and Better Auth.',
       image: 'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=1600&q=80',
       badge: 'Community-Driven Micro Funding',
       actionText: 'Explore Active Campaigns',
@@ -135,7 +131,6 @@ const Home = () => {
     }
   ];
 
-  // 2. Testimonial Slider Data (Static feedback from satisfied users)
   const testimonials = [
     {
       name: 'Sarah Jenkins',
@@ -154,30 +149,21 @@ const Home = () => {
       role: 'Community Supporter',
       image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=250&q=80',
       quote: 'I love receiving instant notifications whenever a creator approves my contribution. The refund guarantee also gives me complete peace of mind when backing bold new ideas.'
-    },
-    {
-      name: 'David Kim',
-      role: 'Hardware Tech Innovator',
-      image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=250&q=80',
-      quote: 'Managing contributions and posting updates to our backers has never been smoother. CrowdSpark truly redefines equitable crowdfunding.'
     }
   ];
 
-  // 3. Extra Section 2: Categories
   const categories = [
-    { name: 'Technology', count: '142 Projects', icon: Zap, color: 'from-blue-500 to-indigo-600', bg: 'bg-blue-50' },
-    { name: 'Community', count: '98 Projects', icon: Users, color: 'from-emerald-500 to-teal-600', bg: 'bg-emerald-50' },
-    { name: 'Creative', count: '115 Projects', icon: Sparkles, color: 'from-purple-500 to-pink-600', bg: 'bg-purple-50' },
-    { name: 'Healthcare', count: '64 Projects', icon: ShieldCheck, color: 'from-rose-500 to-red-600', bg: 'bg-rose-50' },
-    { name: 'Education', count: '87 Projects', icon: Globe2, color: 'from-amber-500 to-orange-600', bg: 'bg-amber-50' },
+    { name: 'Technology', count: '142 Projects', icon: Zap, bg: 'bg-blue-50' },
+    { name: 'Community', count: '98 Projects', icon: Users, bg: 'bg-emerald-50' },
+    { name: 'Creative', count: '115 Projects', icon: Sparkles, bg: 'bg-purple-50' },
+    { name: 'Healthcare', count: '64 Projects', icon: ShieldCheck, bg: 'bg-rose-50' },
+    { name: 'Education', count: '87 Projects', icon: Globe2, bg: 'bg-amber-50' },
   ];
 
   return (
     <div className="space-y-20 pb-20 overflow-hidden">
       
-      {/* ========================================================
-          1. HERO SECTION (Swiper Slider with 3 Banners)
-          ======================================================== */}
+      {/* 1. HERO SECTION (Swiper Slider with 3 Banners) */}
       <section className="relative">
         <Swiper
           modules={[Autoplay, Pagination, Navigation, EffectFade]}
@@ -191,7 +177,6 @@ const Home = () => {
           {heroSlides.map((slide, idx) => (
             <SwiperSlide key={idx}>
               <div className="relative w-full h-full flex items-center">
-                {/* Background Image with Dark Gradient Overlay */}
                 <div
                   className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 scale-105"
                   style={{ backgroundImage: `url(${slide.image})` }}
@@ -199,35 +184,28 @@ const Home = () => {
                   <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/75 to-slate-900/40" />
                 </div>
 
-                {/* Slide Content */}
                 <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 z-10 w-full">
                   <div className="max-w-2xl space-y-6 animate-in fade-in slide-in-from-left duration-700">
-                    
-                    {/* Badge */}
                     <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-xs font-bold tracking-wide backdrop-blur-md">
                       <Sparkles className="w-3.5 h-3.5" />
                       <span>{slide.badge}</span>
                     </div>
 
-                    {/* Heading */}
                     <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-tight">
                       {slide.heading}
                     </h1>
 
-                    {/* Subtitle */}
                     <p className="text-base sm:text-xl font-medium text-emerald-200/90">
                       {slide.subtitle}
                     </p>
 
-                    {/* Description */}
                     <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-xl">
                       {slide.description}
                     </p>
 
-                    {/* CTA Actions */}
                     <div className="pt-2 flex flex-wrap items-center gap-4">
                       <Link
-                        to={slide.link}
+                        href={slide.link}
                         className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm shadow-xl shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:scale-105 transition-all"
                       >
                         <span>{slide.actionText}</span>
@@ -235,13 +213,12 @@ const Home = () => {
                       </Link>
 
                       <Link
-                        to="/register"
+                        href="/register"
                         className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm backdrop-blur-md border border-white/20 transition-all"
                       >
                         <span>Join CrowdSpark</span>
                       </Link>
                     </div>
-
                   </div>
                 </div>
               </div>
@@ -250,9 +227,7 @@ const Home = () => {
         </Swiper>
       </section>
 
-      {/* ========================================================
-          2. TOP FUNDED CAMPAIGNS (Top 6 Raised Credits)
-          ======================================================== */}
+      {/* 2. TOP FUNDED CAMPAIGNS (Top 6 Raised Credits) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
           <div>
@@ -269,7 +244,7 @@ const Home = () => {
           </div>
 
           <Link
-            to="/campaigns"
+            href="/campaigns"
             className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-600 hover:text-emerald-700 group"
           >
             <span>View All Campaigns</span>
@@ -277,7 +252,6 @@ const Home = () => {
           </Link>
         </div>
 
-        {/* Campaign Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {topCampaigns.map((camp) => {
             const raised = camp.amount_raised || 0;
@@ -289,7 +263,6 @@ const Home = () => {
                 key={camp._id}
                 className="bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-card hover:shadow-xl transition-all duration-300 flex flex-col group hover:-translate-y-1.5"
               >
-                {/* Cover Image */}
                 <div className="relative h-52 overflow-hidden bg-slate-100">
                   <img
                     src={camp.campaign_image_url || 'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=600&q=80'}
@@ -305,7 +278,6 @@ const Home = () => {
                   </div>
                 </div>
 
-                {/* Content */}
                 <div className="p-6 flex-1 flex flex-col justify-between">
                   <div>
                     <h3 className="text-base font-bold text-slate-900 line-clamp-2 group-hover:text-emerald-600 transition-colors">
@@ -316,7 +288,6 @@ const Home = () => {
                     </p>
                   </div>
 
-                  {/* Progress Bar */}
                   <div className="mt-6 pt-4 border-t border-slate-100 space-y-2">
                     <div className="flex justify-between text-xs font-bold">
                       <span className="text-emerald-600">{progress}% Funded</span>
@@ -331,7 +302,7 @@ const Home = () => {
 
                     <div className="pt-3">
                       <Link
-                        to={`/campaigns/${camp._id}`}
+                        href={`/campaigns/${camp._id}`}
                         className="w-full py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-emerald-600 hover:text-white text-slate-800 font-bold text-xs transition-all flex items-center justify-center gap-2"
                       >
                         <span>View Details & Back</span>
@@ -346,9 +317,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ========================================================
-          3. EXTRA SECTION 1: HOW IT WORKS (Supporter & Creator)
-          ======================================================== */}
+      {/* 3. HOW IT WORKS */}
       <section className="bg-slate-900 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-14">
@@ -397,9 +366,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ========================================================
-          4. EXTRA SECTION 2: EXPLORE BY CATEGORY
-          ======================================================== */}
+      {/* 4. EXPLORE BY CATEGORY */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-xl mx-auto mb-12">
           <span className="text-xs font-bold text-emerald-600 uppercase tracking-widest">
@@ -419,7 +386,7 @@ const Home = () => {
             return (
               <Link
                 key={idx}
-                to={`/campaigns?category=${cat.name}`}
+                href={`/campaigns?category=${cat.name}`}
                 className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm hover:shadow-xl transition-all duration-300 text-center flex flex-col items-center group hover:-translate-y-1"
               >
                 <div className={`w-14 h-14 rounded-2xl ${cat.bg} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
@@ -437,60 +404,35 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ========================================================
-          5. EXTRA SECTION 3: PLATFORM IMPACT IN NUMBERS
-          ======================================================== */}
+      {/* 5. PLATFORM IMPACT IN NUMBERS */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-gradient-to-br from-emerald-600 via-teal-700 to-slate-900 rounded-3xl p-8 sm:p-14 text-white shadow-2xl relative overflow-hidden">
           <div className="relative z-10 grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
-            
             <div className="space-y-2">
-              <p className="text-3xl sm:text-5xl font-black text-emerald-300 tracking-tight">
-                125K+
-              </p>
-              <p className="text-xs sm:text-sm font-bold uppercase tracking-wider text-white/90">
-                Credits Contributed
-              </p>
+              <p className="text-3xl sm:text-5xl font-black text-emerald-300 tracking-tight">125K+</p>
+              <p className="text-xs sm:text-sm font-bold uppercase tracking-wider text-white/90">Credits Contributed</p>
               <p className="text-[11px] text-white/60">Across all vetted initiatives</p>
             </div>
-
             <div className="space-y-2">
-              <p className="text-3xl sm:text-5xl font-black text-emerald-300 tracking-tight">
-                98.4%
-              </p>
-              <p className="text-xs sm:text-sm font-bold uppercase tracking-wider text-white/90">
-                Pledge Satisfaction
-              </p>
+              <p className="text-3xl sm:text-5xl font-black text-emerald-300 tracking-tight">98.4%</p>
+              <p className="text-xs sm:text-sm font-bold uppercase tracking-wider text-white/90">Pledge Satisfaction</p>
               <p className="text-[11px] text-white/60">Automated credit refunds</p>
             </div>
-
             <div className="space-y-2">
-              <p className="text-3xl sm:text-5xl font-black text-emerald-300 tracking-tight">
-                450+
-              </p>
-              <p className="text-xs sm:text-sm font-bold uppercase tracking-wider text-white/90">
-                Successful Campaigns
-              </p>
+              <p className="text-3xl sm:text-5xl font-black text-emerald-300 tracking-tight">450+</p>
+              <p className="text-xs sm:text-sm font-bold uppercase tracking-wider text-white/90">Successful Campaigns</p>
               <p className="text-[11px] text-white/60">Funded & built to reality</p>
             </div>
-
             <div className="space-y-2">
-              <p className="text-3xl sm:text-5xl font-black text-emerald-300 tracking-tight">
-                $60K+
-              </p>
-              <p className="text-xs sm:text-sm font-bold uppercase tracking-wider text-white/90">
-                Creator Payouts
-              </p>
+              <p className="text-3xl sm:text-5xl font-black text-emerald-300 tracking-tight">$60K+</p>
+              <p className="text-xs sm:text-sm font-bold uppercase tracking-wider text-white/90">Creator Payouts</p>
               <p className="text-[11px] text-white/60">Processed via Stripe & MFS</p>
             </div>
-
           </div>
         </div>
       </section>
 
-      {/* ========================================================
-          6. TESTIMONIAL SECTION (Swiper Slider format)
-          ======================================================== */}
+      {/* 6. TESTIMONIALS */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-xl mx-auto mb-12">
           <div className="inline-flex items-center gap-1.5 text-amber-500 font-bold text-xs uppercase tracking-wider mb-2">
@@ -505,7 +447,6 @@ const Home = () => {
           </p>
         </div>
 
-        {/* Swiper Slider for Testimonials */}
         <Swiper
           modules={[Autoplay, Pagination]}
           autoplay={{ delay: 4500, disableOnInteraction: false }}
@@ -547,6 +488,4 @@ const Home = () => {
 
     </div>
   );
-};
-
-export default Home;
+}
